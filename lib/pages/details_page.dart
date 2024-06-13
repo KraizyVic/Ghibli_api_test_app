@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:ghibliapi/models/anime_model.dart';
 class DetailsPage extends StatelessWidget {
-  final String filmId;
+  final AnimeModel filmId;
   DetailsPage({
     super.key,
     required this.filmId,
   });
 
-  Map<String,dynamic> movieDetailsList = {
+  /*Map<String,dynamic> movieDetailsList = {
     'title':'',
     'original_title' : '',
     'original_title_romanised' : '',
@@ -44,147 +44,136 @@ class DetailsPage extends StatelessWidget {
       throw Exception("Error Fetching Specific Anime");
     }
 
-  }
-
+  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black12,
-      body: FutureBuilder(
-        future: getAnimeData(),
-        builder: (context,snapshot){
-          if(snapshot.connectionState == ConnectionState.done){
-            return SingleChildScrollView(
-              child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: double.maxFinite,
+              height: MediaQuery.of(context).size.height*0.5,
+              child: Stack(
                 children: [
-                  Container(
+                  Image.network(
+                    filmId.movie_banner,
+                    fit: BoxFit.cover,
+                    height: double.maxFinite,
                     width: double.maxFinite,
-                    height: MediaQuery.of(context).size.height*0.5,
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          movieDetailsList['movie_banner'],
-                          fit: BoxFit.cover,
-                          height: double.maxFinite,
-                          width: double.maxFinite,
-                        ),
-                        Container(
-                          height: double.maxFinite,
-                          width: double.maxFinite,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.black,Colors.transparent],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                            )
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            AppBar(
-                              backgroundColor: Colors.transparent,//Colors.blue.withOpacity(0.4),
-                              foregroundColor: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ],
+                  ),
+                  Container(
+                    height: double.maxFinite,
+                    width: double.maxFinite,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black,Colors.transparent],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      )
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              movieDetailsList['title'],
-                              style: const TextStyle(
-                                fontSize: 30,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                    Icons.star,
-                                  color: Colors.yellow,
-                                ),
-                                const SizedBox(width: 5,),
-                                Text(
-                                  movieDetailsList['rt_score'],
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 15,),
-                        Text(
-                            "Original Title: ${movieDetailsList['original_title']}",
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                        Text(
-                            "Romanised Title: ${movieDetailsList['original_title_romanised']}",
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                        Text(
-                          "Release Date: ${movieDetailsList['release_date']}",
-                          style: const TextStyle(
-                              fontSize: 20
-                          ),
-                        ),
-                        Text(
-                          "Running Time: ${movieDetailsList['running_time']}",
-                          style: const TextStyle(
-                              fontSize: 20
-                          ),
-                        ),
-                        Text(
-                          "Director: ${movieDetailsList['director']}",
-                          style: const TextStyle(
-                              fontSize: 20
-                          ),
-                        ),
-                        Text(
-                          "Producer: ${movieDetailsList['producer']}",
-                          style: const TextStyle(
-                              fontSize: 20
-                          ),
-                        ),
-                        const SizedBox(height: 15,),
-                        const Text(
-                          "Description: ",
-                          style: TextStyle(
-                              fontSize: 20
-                          ),
-                        ),
-                        Text(
-                          movieDetailsList['description'],
-                          style: const TextStyle(
-                              fontSize: 16,
-                            letterSpacing: 1.5
-                          ),
-                        ),
-
-                      ],
-                    ),
+                  Column(
+                    children: [
+                      AppBar(
+                        backgroundColor: Colors.transparent,//Colors.blue.withOpacity(0.4),
+                        foregroundColor: Colors.white,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            );
-          }else{
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        }
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        filmId.title,
+                        style: const TextStyle(
+                          fontSize: 30,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                              Icons.star,
+                            color: Colors.yellow,
+                          ),
+                          const SizedBox(width: 5,),
+                          Text(
+                            filmId.rt_score,
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 15,),
+                  Text(
+                      filmId.original_title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                      filmId.original_title_romanised,
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    filmId.release_date,
+                    style: const TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  Text(
+                    filmId.running_time,
+                    style: const TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  Text(
+                    filmId.director,
+                    style: const TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  Text(
+                    filmId.producer,
+                    style: const TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  const Text(
+                    "Description: ",
+                    style: TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  Text(
+                    filmId.description,
+                    style: const TextStyle(
+                        fontSize: 16,
+                      letterSpacing: 1.5
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+          ],
+        ),
+
       ),
     );
   }

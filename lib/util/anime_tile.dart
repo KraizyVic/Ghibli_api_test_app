@@ -3,11 +3,13 @@ class AnimeTile extends StatelessWidget {
 
   final String animePoster;
   final String animeName;
+  //final AsyncSnapshot snapshot;
 
   AnimeTile({
     super.key,
     required this.animePoster,
-    required this.animeName
+    required this.animeName,
+    //required this.snapshot,
   });
 
   @override

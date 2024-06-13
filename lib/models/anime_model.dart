@@ -1,28 +1,48 @@
-import 'dart:convert';
+import 'package:ghibliapi/models/anime_model.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
+class AnimeModel {
+  final String id;
+  final String title;
+  final String original_title;
+  final String original_title_romanised;
+  final String running_time;
+  final String director;
+  final String producer;
+  final String image;
+  final String movie_banner;
+  final String description;
+  final String release_date;
+  final String rt_score;
 
-class AnimeModel extends ChangeNotifier {
-  List<Map<String,dynamic>> _decodedAni = [];
-  List get decodedAni => _decodedAni;
-  Future animes() async{
-    var response = await http.get(Uri.parse('https://ghibliapi.vercel.app/films'));
-    var decodedAnimes = jsonDecode(response.body);
-    if(response.statusCode == 200){
-      for(var i = 0; i < decodedAnimes.length; i++){
-        _decodedAni.add({
-          'id': decodedAnimes[i]['id'],
-          'title': decodedAnimes[i]['title'],
-          'image': decodedAnimes[i]['image'],
-          'movie_banner': decodedAnimes[i]['movie_banner'],
-          'rt_score': decodedAnimes[i]['rt_score'],
-        });
-      }
-    }else{
-      return Exception("Couldn't Load");
-    }
-    notifyListeners();
+  AnimeModel({
+    required this.id,
+    required this.title,
+    required this.original_title,
+    required this.original_title_romanised,
+    required this.running_time,
+    required this.director,
+    required this.producer,
+    required this.image,
+    required this.movie_banner,
+    required this.description,
+    required this.release_date,
+    required this.rt_score,
+  });
+
+  factory AnimeModel.fromJson(Map<String, dynamic> json) {
+    return AnimeModel(
+        id: json['id'] ,
+        title: json['title'],
+        original_title: json['original_title'],
+        original_title_romanised: json['original_title_romanised'],
+        running_time: json['running_time'],
+        director: json['director'],
+        producer: json['producer'],
+        image: json['image'],
+        movie_banner: json['movie_banner'],
+        description: json['description'],
+        release_date: json['release_date'],
+        rt_score: json['rt_score'],
+    );
   }
-
 }

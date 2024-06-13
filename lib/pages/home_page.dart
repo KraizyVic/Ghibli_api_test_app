@@ -2,16 +2,23 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:ghibliapi/models/anime_model.dart';
+import 'package:ghibliapi/models/anime_service.dart';
 import 'package:ghibliapi/pages/details_page.dart';
 import 'package:ghibliapi/util/anime_tile.dart';
 import 'package:http/http.dart' as http ;
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final List<Map<String,dynamic>> decodedAni = [];
 
-  Future animes() async{
+  /*Future animes() async{
     var response = await http.get(Uri.parse('https://ghibliapi.vercel.app/films'));
     var decodedAnimes = jsonDecode(response.body);
     if(response.statusCode == 200){
@@ -27,6 +34,15 @@ class HomePage extends StatelessWidget {
     }else{
       return Exception("Couldn't Load");
     }
+  }*/
+
+  late Future<List<AnimeModel>> animes;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    animes = AnimeService().getAnimes();
+    super.initState();
   }
 
   @override
@@ -34,22 +50,24 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,//Colors.grey[200],
       body: FutureBuilder(
-        future: animes(),
+        future: animes,
         builder: (context,snapshot){
           if(snapshot.connectionState == ConnectionState.done){
+            final animeData = snapshot.data;
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height * 0.5,
-                    child: CarouselSlider(
-                      items: decodedAni.map((i){
+                    child: CarouselSlider.builder(
+                      itemCount: 10,
+                      itemBuilder: (context,itemIndex,pagePreviewIndex){
                         return GestureDetector(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(
                               builder: (context) => DetailsPage(
-                                filmId: i['id'],
+                                filmId: animeData![itemIndex],
                               ),
                             ),
                             );
@@ -59,7 +77,7 @@ class HomePage extends StatelessWidget {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: Image.network(
-                                  '${i['movie_banner']}',
+                                  animeData![itemIndex].movie_banner,
                                   fit: BoxFit.cover,
                                   height: double.maxFinite,
                                 ),
@@ -78,7 +96,7 @@ class HomePage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      i['title'],
+                                      animeData![itemIndex].title,
                                       style: const TextStyle(
                                         fontSize: 20,
                                       ),
@@ -86,7 +104,7 @@ class HomePage extends StatelessWidget {
                                     Row(
                                       children: [
                                         const Icon(Icons.star,color: Colors.yellow,),
-                                        Text(i['rt_score'])
+                                        Text(animeData![itemIndex].rt_score)
                                       ],
                                     )
                                   ],
@@ -96,7 +114,7 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                         );
-                      }).toList(),
+                      },
                       options: CarouselOptions(
                         viewportFraction: 1,
                         autoPlay: true,
@@ -121,20 +139,20 @@ class HomePage extends StatelessWidget {
                     width: double.maxFinite,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: decodedAni.length,
+                      itemCount: 10,
                       itemBuilder: (context,index){
                         return  InkWell(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(
                               builder: (context) => DetailsPage(
-                                filmId: decodedAni[index]['id'],
+                                filmId: animeData![index],
                               ),
                             )
                             );
                           },
                           child: AnimeTile(
-                            animePoster: decodedAni[index]['image'],
-                            animeName: decodedAni[index]['title'],
+                            animePoster: animeData![index].image,
+                            animeName: animeData![index].title,
                           ),
                         );
                       }
@@ -156,27 +174,25 @@ class HomePage extends StatelessWidget {
                     width: double.maxFinite,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: decodedAni.length,
+                      itemCount: 10,
                       itemBuilder: (context,index){
                         return  InkWell(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(
                               builder: (context) => DetailsPage(
-                                filmId: decodedAni[index]['id'],
+                                filmId: snapshot.data![index],
                               ),
                             )
                             );
                           },
                           child: AnimeTile(
-                            animePoster: decodedAni[index]['image'],
-                            animeName: decodedAni[index]['title'],
+                            animePoster: snapshot.data![index].image,
+                            animeName: snapshot.data![index].title,
                           ),
                         );
                       }
                     ),
                   ),
-
-
                 ],
               ),
             );
