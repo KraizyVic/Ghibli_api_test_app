@@ -5,11 +5,8 @@ import 'package:ghibliapi/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-      create: (context)=>AnimeModel(),
-    child: const MyApp(),
-  ),
-
+  runApp(
+    const MyApp(),
   );
 }
 
